@@ -8179,11 +8179,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\CICLO 6\\M\\Backend-v1\\backend\\Backend.API\\Backend.API.csproj",
+      "projectUniqueName": "E:\\CICLO 6\\M\\Backend-v1\\Backend.API\\Backend.API.csproj",
       "projectName": "Backend.API",
-      "projectPath": "E:\\CICLO 6\\M\\Backend-v1\\backend\\Backend.API\\Backend.API.csproj",
+      "projectPath": "E:\\CICLO 6\\M\\Backend-v1\\Backend.API\\Backend.API.csproj",
       "packagesPath": "C:\\Users\\USUARIO\\.nuget\\packages\\",
-      "outputPath": "E:\\CICLO 6\\M\\Backend-v1\\backend\\Backend.API\\obj\\",
+      "outputPath": "E:\\CICLO 6\\M\\Backend-v1\\Backend.API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\USUARIO\\AppData\\Roaming\\NuGet\\NuGet.Config"
