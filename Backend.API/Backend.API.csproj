@@ -4,6 +4,8 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <LangVersion>latest</LangVersion>
+
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,6 +24,15 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.6" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="restaurants\Domain\Model\Commands\" />
+      <Folder Include="restaurants\Domain\Model\ValueObjects\" />
+      <Folder Include="restaurants\Domain\Services\" />
+      <Folder Include="restaurants\Infrastructure\" />
+      <Folder Include="restaurants\Interfaces\" />
+      <Folder Include="restaurants\Internal\" />
     </ItemGroup>
 
 </Project>
