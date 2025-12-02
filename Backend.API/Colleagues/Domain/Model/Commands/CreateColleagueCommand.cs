@@ -1,4 +1,4 @@
-﻿using Backend.API.colleagues.Domain.Model.ValueObjects;
+﻿using Backend.API.Colleagues.Domain.Model.ValueObjects;
 
 namespace Backend.API.colleagues.Domain.Model.Commands;
 

@@ -1,4 +1,4 @@
-﻿namespace Backend.API.colleagues.Domain.Model.ValueObjects;
+﻿namespace Backend.API.Colleagues.Domain.Model.ValueObjects;
 
 /// <summary>
 ///     Represents an address value object.

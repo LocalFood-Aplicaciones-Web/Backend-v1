@@ -1,6 +1,6 @@
-﻿using Backend.API.colleagues.Domain.Model.ValueObjects;
-
-namespace Backend.API.colleagues.Domain.Model.Aggregate;
+﻿using Backend.API.Colleagues.Domain.Model.ValueObjects;
+using Backend.API.Colleagues.Domain.Model.Entities;
+namespace Backend.API.Colleagues.Domain.Model.Aggregate;
 
 /// <summary>
 ///     Colleague aggregate root entity.

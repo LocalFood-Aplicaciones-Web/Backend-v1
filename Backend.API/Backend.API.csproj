@@ -25,12 +25,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="colleagues\Application\" />
-      <Folder Include="colleagues\Domain\Model\Entities\" />
-      <Folder Include="colleagues\Domain\Model\Events\" />
-      <Folder Include="colleagues\Domain\Model\Queries\" />
-      <Folder Include="colleagues\Infrastructure\" />
-      <Folder Include="colleagues\Interfaces\" />
+      <Folder Include="Colleagues\Application\" />
+      <Folder Include="Colleagues\Infrastructure\" />
+      <Folder Include="Colleagues\Interfaces\" />
     </ItemGroup>
 
 </Project>
