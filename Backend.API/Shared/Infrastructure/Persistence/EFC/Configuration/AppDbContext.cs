@@ -1,6 +1,7 @@
 using Backend.API.IAM.Domain.Model.Aggregates;
 using Backend.API.IAM.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using Backend.API.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using Backend.API.Groups.Domain.Model.Aggregates;
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,9 +15,12 @@ namespace Backend.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 /// </param>
 public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
-   /// <summary>
-   ///     On configuring the database context
-   /// </summary>
+    public DbSet<Group> Groups { get; set; }
+    public DbSet<Colleague> Colleagues { get; set; }
+    public DbSet<Restaurant> Restaurants { get; set; }
+    public DbSet<Calculation> Calculations { get; set; }
+
+   // ...existing code...
    /// <remarks>
    ///     This method is used to configure the database context.
    ///     It also adds the created and updated date interceptor to the database context.
@@ -47,6 +51,9 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         
         // IAM Context
         builder.ApplyIamConfiguration();
+        
+        // Groups Context
+        builder.ApplyGroupsConfiguration();
         
         // General Naming Convention for the database objects
         builder.UseSnakeCaseNamingConvention();

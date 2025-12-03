@@ -2,6 +2,7 @@ using Backend.API.IAM.Application.Internal.OutboundServices;
 using Backend.API.IAM.Domain.Model.Queries;
 using Backend.API.IAM.Domain.Services;
 using Backend.API.IAM.Infrastructure.Pipeline.Middleware.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.API.IAM.Infrastructure.Pipeline.Middleware.Components;
 
@@ -24,42 +25,74 @@ public class RequestAuthorizationMiddleware(RequestDelegate next)
         IUserQueryService userQueryService,
         ITokenService tokenService)
     {
-        Console.WriteLine("Entering InvokeAsync");
-        // skip authorization if endpoint is decorated with [AllowAnonymous] attribute
-        var allowAnonymous = context.Request.HttpContext.GetEndpoint()!.Metadata
-            .Any(m => m.GetType() == typeof(AllowAnonymousAttribute));
-        Console.WriteLine($"Allow Anonymous is {allowAnonymous}");
-        if (allowAnonymous)
+        try
         {
-            Console.WriteLine("Skipping authorization");
-            // [AllowAnonymous] attribute is set, so skip authorization
+            // skip authorization if endpoint is decorated with [AllowAnonymous] attribute
+            var endpoint = context.GetEndpoint();
+            var allowAnonymous = endpoint?.Metadata.Any(m => 
+                m.GetType() == typeof(Backend.API.IAM.Infrastructure.Pipeline.Middleware.Attributes.AllowAnonymousAttribute) || 
+                m.GetType() == typeof(Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute)) ?? false;
+            
+            if (allowAnonymous)
+            {
+                // [AllowAnonymous] attribute is set, so skip authorization
+                await next(context);
+                return;
+            }
+            
+            // get token from request header
+            var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+            
+            if (string.IsNullOrEmpty(authHeader))
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsync("Missing Authorization header");
+                return;
+            }
+
+            var token = authHeader.Split(" ").Last();
+
+            // if token is null or empty then return 401
+            if (string.IsNullOrEmpty(token))
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsync("Invalid token format");
+                return;
+            }
+
+            // validate token
+            var userId = await tokenService.ValidateToken(token);
+
+            // if token is invalid then return 401
+            if (userId == null)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsync("Invalid or expired token");
+                return;
+            }
+
+            // get user by id
+            var getUserByIdQuery = new GetUserByIdQuery(userId.Value);
+            var user = await userQueryService.Handle(getUserByIdQuery);
+            
+            if (user == null)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsync("User not found");
+                return;
+            }
+            
+            // set user in HttpContext.Items for downstream middleware/handlers
+            context.Items["User"] = user;
+            
+            // call next middleware
             await next(context);
-            return;
         }
-        Console.WriteLine("Entering authorization");
-        // get token from request header
-        var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-
-
-        // if token is null then throw exception
-        if (token == null) throw new Exception("Null or invalid token");
-
-        // validate token
-        var userId = await tokenService.ValidateToken(token);
-
-        // if token is invalid then throw exception
-        if (userId == null) throw new Exception("Invalid token");
-
-        // get user by id
-        var getUserByIdQuery = new GetUserByIdQuery(userId.Value);
-
-        // set user in HttpContext.Items["User"]
-
-        var user = await userQueryService.Handle(getUserByIdQuery);
-        Console.WriteLine("Successful authorization. Updating Context...");
-        context.Items["User"] = user;
-        Console.WriteLine("Continuing with Middleware Pipeline");
-        // call next middleware
-        await next(context);
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Authorization error: {ex.Message}");
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync($"Authorization failed: {ex.Message}");
+        }
     }
 }
